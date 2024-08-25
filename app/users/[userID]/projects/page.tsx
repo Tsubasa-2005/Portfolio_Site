@@ -1,21 +1,19 @@
-// app/projects/page.tsx
 import React from 'react';
-import { Project } from '@/app/types/db/core';
+import  {CreateProjectsRow} from "@/lib/infra/rdb/projects_sql";
 import ProjectCard from '@/app/components/projects/ProjectCard';
 
-export const revalidate = 60; // キャッシュの有効期限を設定 (60秒)
+const ProjectsPage = async ({ params }: { params: { userID: string } }) => {
+    const { userID } = params;
 
-const ProjectsPage = async () => {
-    // サーバーサイドでプロジェクトデータを取得
-    const response = await fetch(`${process.env.NEXT_PUBLIC_API_URL}/api/projects`, {
-        cache: 'no-store', // キャッシュを無効にして常に最新のデータを取得
+    const response = await fetch(`${process.env.NEXT_PUBLIC_API_URL}/api/${userID}/projects`, {
+        cache: 'no-store',
     });
 
     if (!response.ok) {
         throw new Error('Failed to fetch projects');
     }
 
-    const { ongoingProjects, completedProjects }: { ongoingProjects: Project[], completedProjects: Project[] } = await response.json();
+    const { ongoingProjects, completedProjects }: { ongoingProjects: CreateProjectsRow[], completedProjects: CreateProjectsRow[] } = await response.json();
 
     return (
         <div className="container mx-auto py-12 px-6">

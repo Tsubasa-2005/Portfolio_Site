@@ -1,12 +1,17 @@
+"use client";
+
 import React from 'react';
 import Link from 'next/link';
-import { Project } from '@/app/types/db/core';
+import { useParams } from 'next/navigation';
+import { CreateProjectsRow } from "@/lib/infra/rdb/projects_sql";
 
 interface ProjectCardProps {
-    project: Project;
+    project: CreateProjectsRow;
 }
 
 const ProjectCard: React.FC<ProjectCardProps> = ({ project }) => {
+    const { userID } = useParams();
+
     return (
         <div
             key={project.id.toString()}
@@ -21,7 +26,7 @@ const ProjectCard: React.FC<ProjectCardProps> = ({ project }) => {
             <div className="p-6">
                 <p className="text-gray-700 mb-4">{project.description}</p>
                 <Link
-                    href={`/projects/${project.id.toString()}`}
+                    href={`/users/${userID}/projects/${project.id.toString()}`}
                     className="inline-block bg-blue-500 text-white font-semibold py-2 px-4 rounded-lg hover:bg-blue-600 transition-colors duration-300"
                 >
                     View Project Details
