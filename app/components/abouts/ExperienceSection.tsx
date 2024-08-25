@@ -1,9 +1,8 @@
-// app/components/abouts/ExperienceSection.tsx
 import React from 'react';
-import {Experience} from "@/app/types/db/core";
+import { CreateExperienceArgs } from '@/lib/infra/rdb/experiences_sql';
 
 interface ExperienceSectionProps {
-    experiences: Experience[];
+    experiences: CreateExperienceArgs[];
 }
 
 const ExperienceSection: React.FC<ExperienceSectionProps> = ({ experiences }) => {
@@ -16,7 +15,9 @@ const ExperienceSection: React.FC<ExperienceSectionProps> = ({ experiences }) =>
                         {/* タイムラインマーカー */}
                         <div className="flex flex-col items-center">
                             <div className="w-4 h-4 bg-blue-500 rounded-full"></div>
-                            {index < experiences.length - 1 && <div className="h-full w-px bg-blue-500"></div>}
+                            {index < experiences.length - 1 && (
+                                <div className="h-full w-px bg-blue-500"></div>
+                            )}
                         </div>
                         {/* コンテンツ */}
                         <div className="ml-6">
