@@ -1,47 +1,88 @@
-// app/components/abouts/SkillsSection.tsx
-import React from 'react';
-import { FaCode, FaNodeJs, FaReact, FaDocker, FaHtml5, FaCss3Alt, FaGitAlt } from 'react-icons/fa';
-import { SiTypescript, SiNextdotjs, SiTailwindcss, SiStrapi } from 'react-icons/si';
-import {Skill} from "@/app/types/db/core";
+"use client";
 
-interface SkillsSectionProps {
-    skills: Skill[];
+import React, { useEffect, useState } from "react";
+
+interface SkillDetail {
+    id: string;
+    name: string;
+    description: string;
+    level: number; // スキルレベルをパーセンテージで表す
+    icon: string;
+    url: string;  // 公式サイトのURL
 }
 
-const iconMap: { [key: string]: JSX.Element } = {
-    FaCode: <FaCode />,
-    FaNodeJs: <FaNodeJs />,
-    FaReact: <FaReact />,
-    FaDocker: <FaDocker />,
-    FaHtml5: <FaHtml5 />,
-    FaCss3Alt: <FaCss3Alt />,
-    FaGitAlt: <FaGitAlt />,
-    SiTypescript: <SiTypescript />,
-    SiNextdotjs: <SiNextdotjs />,
-    SiTailwindcss: <SiTailwindcss />,
-    SiStrapi: <SiStrapi />,
-};
+interface SkillsSectionProps {
+    skillID: string;
+    userID: string;
+}
 
-const SkillsSection: React.FC<SkillsSectionProps> = ({ skills }) => {
+const SkillsSection: React.FC<SkillsSectionProps> = ({ skillID, userID }) => {
+    const [skillDetails, setSkillDetails] = useState<SkillDetail[]>([]);
+    const [error, setError] = useState<string | null>(null);
+
+    useEffect(() => {
+        const fetchSkillDetails = async () => {
+            try {
+                const response = await fetch(`/api/${userID}/about/skillDetails/${skillID}`, {
+                    cache: "no-store",
+                });
+
+                if (!response.ok) {
+                    throw new Error("Failed to fetch skill details");
+                }
+
+                const data = await response.json();
+                setSkillDetails(data);
+            } catch (error: any) {
+                setError(error.message || "An error occurred");
+            }
+        };
+
+        fetchSkillDetails();
+    }, [skillID, userID]);
+
+    if (error) {
+        return <p>{error}</p>;
+    }
+
+    if (!skillDetails.length) {
+        return <p>Loading...</p>;
+    }
+
     return (
-        <section className="mb-12">
-            <h2 className="text-3xl font-semibold mb-6">Skills</h2>
-            <ul className="grid grid-cols-2 sm:grid-cols-3 gap-4">
-                {skills.map((skill, index) => (
-                    <li key={index}>
+        <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-4">
+            {skillDetails.map((skill) => (
+                <div key={skill.id} className="p-6 bg-white rounded-lg shadow-lg">
+                    <h3 className="text-xl font-semibold mb-2">
                         <a
                             href={skill.url}
                             target="_blank"
                             rel="noopener noreferrer"
-                            className="flex items-center space-x-3 p-4 bg-gray-100 rounded-lg shadow-md hover:bg-blue-100 transition duration-300"
+                            className="text-black hover:text-blue-500 transition duration-300"
                         >
-                            <span className="text-blue-500 text-2xl">{iconMap[skill.icon]}</span>
-                            <span className="text-lg font-medium">{skill.name}</span>
+                            {skill.name}
                         </a>
-                    </li>
-                ))}
-            </ul>
-        </section>
+                    </h3>
+                    <p className="text-gray-700 mb-4">{skill.description}</p>
+                    <div className="mb-4">
+                        {/* プログレスバーとラベル */}
+                        <div className="flex justify-between items-center mb-1">
+                            <span className="text-sm font-medium text-gray-700">習熟度</span>
+                            <span className="text-sm font-medium text-gray-700">{skill.level}%</span>
+                        </div>
+                        <div className="relative h-4 bg-gray-200 rounded-full overflow-hidden">
+                            <div
+                                className="h-full rounded-full"
+                                style={{
+                                    width: `${skill.level}%`,
+                                    background: `linear-gradient(90deg, #00c6ff, #0072ff)`,
+                                }}
+                            ></div>
+                        </div>
+                    </div>
+                </div>
+            ))}
+        </div>
     );
 };
 

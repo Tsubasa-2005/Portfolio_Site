@@ -1,9 +1,9 @@
 // app/components/abouts/AboutMeSection.tsx
 import React from 'react';
 import Image from 'next/image';
-import { AboutMeSectionProps } from '@/app/types/db/core';
+import {CreateAboutMeSectionArgs} from "@/lib/infra/rdb/about_me_sections_sql";
 
-const AboutMeSection: React.FC<AboutMeSectionProps> = ({ name, introduction, hobbies }) => {
+const AboutMeSection: React.FC<CreateAboutMeSectionArgs> = ({ name, introduction, hobbies }) => {
     return (
         <section className="mb-12 bg-white p-8 rounded-lg shadow-md">
             <div className="flex items-center mb-6">
@@ -18,7 +18,7 @@ const AboutMeSection: React.FC<AboutMeSectionProps> = ({ name, introduction, hob
                 <h2 className="text-3xl font-semibold text-gray-800">Introduction</h2>
             </div>
             <p className="text-lg leading-relaxed mb-6 text-gray-700">
-                Hello! I'm {name}, a web developer with a passion for building intuitive and efficient applications.
+                Hello! I am {name}, a web developer with a passion for building intuitive and efficient applications.
             </p>
 
             <div className="mb-6">
