@@ -1,6 +1,6 @@
 import { NextResponse } from 'next/server';
 import { pool } from '@/lib/infra/db';
-import { getProject } from '@/lib/infra/rdb/projects_sql';
+import { getProjectDetailsByProjectID } from '@/lib/infra/rdb/project_details_sql';
 
 export async function GET(req: Request, { params }: { params: { projectID: string } }) {
     const { projectID } = params;
@@ -10,7 +10,7 @@ export async function GET(req: Request, { params }: { params: { projectID: strin
     }
 
     try {
-        const project = await getProject(pool, { id: projectID });
+        const project = await getProjectDetailsByProjectID(pool, { projectId: projectID });
 
         if (!project) {
             return NextResponse.json({ message: 'Project not found' }, { status: 404 });
